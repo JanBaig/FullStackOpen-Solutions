@@ -1,18 +1,22 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import Input from "./Components/Input"
 import Person from "./Components/Person";
+import axios from 'axios';
 
 function App() {
 
   const [newName, setNewName] = useState("")
   const [newNum, setNewNum] = useState("")
   const [search, setSearch] = useState("")
-  const [persons, setPersons] = useState([
-    {name: "Janat", number: "123 456 789"},
-    {name: "Henry", number: "123 456 789"},
-    {name: "Jonah", number: "123 456 789"},
-    {name: "Derek", number: "123 456 789"}
-  ])
+  const [persons, setPersons] = useState([])
+
+  // Fetching data from the JSON server
+  useEffect(() => {
+    axios.get('http://localhost:3001/persons')
+    .then(response => {
+    setPersons(response.data);
+    })
+  }, [])
   
   function addData(event){
     event.preventDefault();
@@ -103,7 +107,6 @@ function App() {
     
       {fiteredDisplay()}
       
-    
     </div>
   );
 }
