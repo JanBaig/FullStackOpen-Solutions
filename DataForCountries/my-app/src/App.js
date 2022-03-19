@@ -20,43 +20,69 @@ function App() {
 
   }, [])
 
-
-  // Display the Data - Case sensitive?
+  // Display the Data
   function DisplayData(){
 
-    // Filtering based on search value
-    var filtered = data.filter(element => element.name.common.includes(input))
+    // Filtering based on search value (Case insensitive)
+    var filtered = data.filter(element => element.name.common.toLowerCase().includes(input.toLowerCase()))
 
-    var display = filtered.map((element, index) => {
+    var countryList = filtered.map((element, index) => {
       return (
-        <li key={index}>
-         {element.name.common}
+        <div key={index}>
+
+        <li>
+          {element.name.common} 
+        <button>view</button>
         </li>
+        </div>
       )
     })
 
+    // Render Conditions
+    // PROBLEM: can't pass in filtered for more than one
+    var render;
     if (filtered.length == 1){
-      console.log("here");
+      render = <SingleData country={filtered}/>
+    }
+    else if (filtered.length > 10){
+      render = <p>Be Specfic!</p>
+    }
+    else {
+      render = 
+      <div>
+        <ul>{countryList}</ul>
+        
+      </div>;
     }
 
     return(
       <div>
-        <ul>
-          {display}
-        </ul>
+        {render}
+      </div>
+    )
+  }
+
+  // Rendering specfic statistics
+  function SingleData( {country} ){
+   
+    return (
+      <div>
+
+        <h2>{country[0].name.common}</h2>
+        <p>Capital: {country[0].capital[0]} </p>
+        <p>Population: {country[0].population} </p>
+        <p>Language(s): {Object.keys(country[0].languages).map((lang, index) => <li key={index}>{country[0].languages[lang]}</li>)}</p>
+        <img src={country[0].flags.png} width="200" height = "100"></img>
 
       </div>
     )
-
   }
-
 
 
   return (
     <div>
       <h2>Data for Countries</h2>
       <input type={'text'} value={input} onChange={changed}/>
-
 
       <DisplayData />
 
