@@ -111,3 +111,4 @@ export default App;
 //1. Need to re-initialize the single data state (after single data component is rendered)so that the user can click on other buttons 
 //2. Need to display the single data (not on btn click) outside of a list (it is in fitlered and filtered is a list). How to un-list?
 
+// Very helpful: https://youtu.be/eGaaw1Py2aY 
