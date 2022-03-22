@@ -6,9 +6,12 @@ function App() {
   const [data, setData] = useState([]);
   // Have this hold the name or the obj itself?
   const [single, setSingle] = useState({});
+  const [weather, setWeather] = useState();
 
   function changed(event){
     setInput(event.target.value);
+    // Resetting the state so that the previous country searched is disregarded
+    setSingle({});
   }
 
   //Fetching from API
@@ -38,7 +41,6 @@ function App() {
 
         <button onClick={() => {
             setSingle(element)
-            console.log(element);
 
           }}> view </button>
         </li>
@@ -50,7 +52,7 @@ function App() {
     // PROBLEM: can't pass in filtered for more than one
     var render;
     if (filtered.length == 1){
-      render = <SingleData country={filtered}/>
+      render = <SingleData country={filtered[0]}/>
     }
     else if (filtered.length > 10){
       render = <p>Be Specfic!</p>
@@ -60,7 +62,6 @@ function App() {
       <div>
         {/* <SingleData country={single}/> */}
         
-        {console.log(Object.keys(single).length === 0)}
         {Object.keys(single).length === 0? countryList : <SingleData country={single}/>}
         
       </div>;
@@ -75,8 +76,20 @@ function App() {
 
   // Rendering specfic statistics
   function SingleData( {country} ){ // an object
-    console.log(country);
-   
+    const apiKey = `951f2db4dd247480792190366a2ed928`;
+
+    // Fetching data from OpenWeatherMaps
+    useEffect(() =>{
+      axios
+      .get(`https://api.openweathermap.org/data/2.5/weather?q=${country.capital[0]}&appid=${apiKey}`)
+      .then(response => {
+        //setWeather(response);
+        console.log(response);
+      })
+
+    }, [])
+
+
     return (
       <div>
 
@@ -84,8 +97,10 @@ function App() {
         <p>Capital: {country.capital[0]} </p>
         <p>Population: {country.population} </p>
         <p>Language(s): {Object.keys(country.languages).map((lang, index) => <li key={index}>{country.languages[lang]}</li>)}</p>
-        <img src={country.flags.png} width="200" height = "100"></img>
+        <img src={country.flags.png} width="100" height = "50"></img>
 
+        <h3>Weather in {country.capital[0]}</h3>
+        
       </div>
     )
   }
