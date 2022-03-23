@@ -7,6 +7,8 @@ function App() {
   // Have this hold the name or the obj itself?
   const [single, setSingle] = useState({});
   const [weather, setWeather] = useState();
+  const [run, setRun] = useState(false);
+  const apiKey = `951f2db4dd247480792190366a2ed928`;
 
   function changed(event){
     setInput(event.target.value);
@@ -14,7 +16,7 @@ function App() {
     setSingle({});
   }
 
-  //Fetching from API
+  //Fetching from Counntry API
   useEffect(() => {
     axios
     .get('https://restcountries.com/v3.1/all')
@@ -22,6 +24,20 @@ function App() {
       setData(response.data);
       
     })
+
+  }, [])
+
+  // Fetching data from OpenWeatherMaps
+  useEffect(() =>{
+    if (run == true){
+      axios
+      .get(`https://api.openweathermap.org/data/2.5/weather?q=${single.capital[0]}&appid=${apiKey}`)
+      .then(response => {
+        //setWeather(response);
+        console.log(response);
+      })
+
+    } 
 
   }, [])
 
@@ -60,7 +76,6 @@ function App() {
     else { // in between 1-10
       render = 
       <div>
-        {/* <SingleData country={single}/> */}
         
         {Object.keys(single).length === 0? countryList : <SingleData country={single}/>}
         
@@ -73,23 +88,13 @@ function App() {
       </div>
     )
   }
-
+  
   // Rendering specfic statistics
   function SingleData( {country} ){ // an object
-    const apiKey = `951f2db4dd247480792190366a2ed928`;
-
-    // Fetching data from OpenWeatherMaps
-    useEffect(() =>{
-      axios
-      .get(`https://api.openweathermap.org/data/2.5/weather?q=${country.capital[0]}&appid=${apiKey}`)
-      .then(response => {
-        //setWeather(response);
-        console.log(response);
-      })
-
-    }, [])
-
-
+    if (1 == 1){
+      setRun(true);
+    }
+  
     return (
       <div>
 
