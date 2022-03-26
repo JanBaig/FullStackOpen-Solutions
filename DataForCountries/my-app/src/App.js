@@ -1,14 +1,13 @@
 import React, { useState, useEffect } from "react";
 import axios from 'axios';
+import Weather from './Weather';
 
 function App() {
   const [input, setInput] = useState("");
   const [data, setData] = useState([]);
   // Have this hold the name or the obj itself?
   const [single, setSingle] = useState({});
-  const [weather, setWeather] = useState();
   const [run, setRun] = useState(false);
-  const apiKey = `951f2db4dd247480792190366a2ed928`;
 
   function changed(event){
     setInput(event.target.value);
@@ -16,7 +15,7 @@ function App() {
     setSingle({});
   }
 
-  //Fetching from Counntry API
+  //Fetching from Country API
   useEffect(() => {
     axios
     .get('https://restcountries.com/v3.1/all')
@@ -27,19 +26,6 @@ function App() {
 
   }, [])
 
-  // Fetching data from OpenWeatherMaps
-  useEffect(() =>{
-    if (run == true){
-      axios
-      .get(`https://api.openweathermap.org/data/2.5/weather?q=${single.capital[0]}&appid=${apiKey}`)
-      .then(response => {
-        //setWeather(response);
-        console.log(response);
-      })
-
-    } 
-
-  }, [])
 
   // Display the Data
   function DisplayData(){
@@ -48,7 +34,7 @@ function App() {
     var filtered = data.filter(element => element.name.common.toLowerCase().includes(input.toLowerCase()))
 
     var countryList = filtered.map((element, index) => {
-  
+      
       return (
         <div key={index}>
 
@@ -56,7 +42,7 @@ function App() {
           {element.name.common} 
 
         <button onClick={() => {
-            setSingle(element)
+            setSingle(element);
 
           }}> view </button>
         </li>
@@ -65,7 +51,6 @@ function App() {
     })
 
     // Render Conditions
-    // PROBLEM: can't pass in filtered for more than one
     var render;
     if (filtered.length == 1){
       render = <SingleData country={filtered[0]}/>
@@ -88,13 +73,10 @@ function App() {
       </div>
     )
   }
-  
+
   // Rendering specfic statistics
   function SingleData( {country} ){ // an object
-    if (1 == 1){
-      setRun(true);
-    }
-  
+
     return (
       <div>
 
@@ -106,10 +88,11 @@ function App() {
 
         <h3>Weather in {country.capital[0]}</h3>
         
+        <Weather capital = {country.capital[0]}/>
+        
       </div>
     )
   }
-
 
   return (
     <div>
@@ -117,7 +100,7 @@ function App() {
       <input type={'text'} value={input} onChange={changed}/>
 
       <DisplayData />
-
+      
     </div>
 
     
@@ -132,3 +115,5 @@ export default App;
 //2. Need to display the single data (not on btn click) outside of a list (it is in fitlered and filtered is a list). How to un-list?
 
 // Very helpful: https://youtu.be/eGaaw1Py2aY 
+
+// How can I set the state to be true when we call the singleData component?
