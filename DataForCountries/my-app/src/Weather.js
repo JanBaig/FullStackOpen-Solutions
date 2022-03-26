@@ -4,7 +4,9 @@ import axios from "axios";
 
 function Weather( {capital}){
     const [weatherData, setWeatherData] = useState("");
+    const [icon, setIcon] = useState("");
     const apiKey = `951f2db4dd247480792190366a2ed928`;
+    var image;
 
     // Fetching data from OpenWeatherMaps
     useEffect(() =>{
@@ -14,7 +16,7 @@ function Weather( {capital}){
         .then(response => {
             if (cancel) return;
             setWeatherData(response)
-            console.log(response.data);
+            setIcon(response.data.weather[0].icon)
         })
 
         return() => {
@@ -23,6 +25,8 @@ function Weather( {capital}){
 
     }, [])
 
+    // Image
+    image = "https://openweathermap.org/img/wn/" + icon + "@2x.png"
 
     return(
 
@@ -32,7 +36,7 @@ function Weather( {capital}){
                 <div>
                     <p>Temperature: {weatherData.data.main.temp}</p>
                     <p>Wind Speed: {weatherData.data.wind.speed}</p>
-                    <img src="https://openweathermap.org/img/wn/01d@2x.png"/>
+                    <img src={image}/>
                 </div>
             )} 
             
