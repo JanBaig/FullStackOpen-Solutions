@@ -26,7 +26,7 @@ function Weather( {capital}){
     }, [])
 
     // Image
-    image = "https://openweathermap.org/img/wn/" + icon + "@2x.png"
+    image = "https://openweathermap.org/img/wn/" + icon + "@2x.png";
 
     return(
 
