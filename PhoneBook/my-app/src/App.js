@@ -12,6 +12,7 @@ function App() {
 
   // Fetching data from the JSON server
   useEffect(() => {
+    // Make sure to run the JSON server first
     axios.get('http://localhost:3001/persons')
     .then(response => {
     setPersons(response.data);
@@ -29,12 +30,22 @@ function App() {
     var noDuplicates = persons.every((element)=>element.name != newName)
 
     if (noDuplicates){
-      setPersons(persons.concat(newObj));
+      
+      
+      // Writing to the Server
+      axios 
+      .post('http://localhost:3001/persons', newObj)
+      .then(response => {
+        setPersons(persons.concat(newObj));
+       
+      })
+
     }
     else{
       alert(`${newName} is alread in the PhoneBook.`)
     }
 
+    // Want to reset if passes conditions or not
     setNewName("");
     setNewNum("");
     
