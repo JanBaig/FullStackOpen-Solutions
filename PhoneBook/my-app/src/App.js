@@ -2,6 +2,7 @@ import React, {useEffect, useState} from "react";
 import Input from "./Components/Input"
 import Person from "./Components/Person";
 import axios from 'axios';
+import noteService from './Services/notes';
 
 function App() {
 
@@ -12,11 +13,13 @@ function App() {
 
   // Fetching data from the JSON server
   useEffect(() => {
+
     // Make sure to run the JSON server first
-    axios.get('http://localhost:3001/persons')
-    .then(response => {
-    setPersons(response.data);
+    noteService.getAll()
+    .then(initialNotes => {
+      setPersons(initialNotes);
     })
+
   }, [])
   
   function addData(event){
@@ -24,28 +27,44 @@ function App() {
 
     const newObj = {
       name: newName,
-      number: newNum
+      number: newNum,
+      id: persons.length +1
     }
 
     var noDuplicates = persons.every((element)=>element.name != newName)
 
     if (noDuplicates){
       
-      
-      // Writing to the Server
-      axios 
-      .post('http://localhost:3001/persons', newObj)
-      .then(response => {
-        setPersons(persons.concat(newObj));
-       
+      // Savings the notes to the Backend Server
+      noteService.create(newObj)
+      // Returned note is actually just the response.data
+      .then(returnedNote => {
+        setPersons(persons.concat(returnedNote));
       })
 
     }
+
     else{
-      alert(`${newName} is alread in the PhoneBook.`)
+      // The goal now is to replace the previous number with the new number. (The name stays the same)
+
+      var prevObj = {};
+
+      console.log("New ID: ", newObj.id);
+      for (var i=0; i<persons.length; i++){
+        if (persons[i].name == newObj.name){
+          prevObj = persons[i];
+        }
+      }
+
+      axios.put(`http://localhost:3001/persons/${prevObj.id}`, newObj)
+      .then((response) => {
+        setPersons(persons.map(obj => obj.id !== prevObj.id ? obj : response.data))
+
+      })
+      
     }
 
-    // Want to reset if passes conditions or not
+    // Want to reset regardless 
     setNewName("");
     setNewNum("");
     
@@ -61,20 +80,23 @@ function App() {
     var  displayObj = filtered.map(function(data, index){
       return(
         <Person key={index} data={data}/>
+          
       )
     })
 
     return(
-      <table>
-        <tbody>
-          <tr>
-            <th>Name</th>
-            <th>Phone Number</th>
-          </tr>
-          {displayObj}
-        </tbody>
-       
-      </table>
+
+        <table>
+          <tbody>
+            <tr>
+              <th>Name</th>
+              <th>Phone Number</th>
+              <th>Delete Options</th>
+            </tr>
+            {displayObj}
+          </tbody>
+        </table>
+
     )
 }
 
