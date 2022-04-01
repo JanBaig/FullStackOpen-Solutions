@@ -3,6 +3,8 @@ import Input from "./Components/Input"
 import Person from "./Components/Person";
 import axios from 'axios';
 import noteService from './Services/notes';
+import './index.css';
+import Notification from "./Components/Notification";
 
 function App() {
 
@@ -103,6 +105,8 @@ function App() {
     <div >
 
       <h1>Phone Book</h1>
+
+      <Notification message={"Testing"} />
       
       <form onSubmit={addData}>
         <div>
