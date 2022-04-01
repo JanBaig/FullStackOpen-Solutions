@@ -49,7 +49,6 @@ function App() {
 
       var prevObj = {};
 
-      console.log("New ID: ", newObj.id);
       for (var i=0; i<persons.length; i++){
         if (persons[i].name == newObj.name){
           prevObj = persons[i];
@@ -61,7 +60,7 @@ function App() {
         setPersons(persons.map(obj => obj.id !== prevObj.id ? obj : response.data))
 
       })
-      
+
     }
 
     // Want to reset regardless 

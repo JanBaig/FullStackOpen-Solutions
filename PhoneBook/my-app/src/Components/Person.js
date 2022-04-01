@@ -7,9 +7,14 @@ function Person({ data }){
     // Function for deleting
     function deletingBtn(){
         const baseUrl = 'http://localhost:3001/persons';
-        window.confirm(`Delete #${data.id}?`);
-        noteService.remove(data.id);
-        window.location.reload(true);   
+
+        var result = window.confirm(`Delete #${data.id}?`);
+
+        if (result){ // If the user clicks OK
+            noteService.remove(data.id); 
+            window.location.reload(true);  
+        }
+
     }
 
     return(
