@@ -12,6 +12,7 @@ function App() {
   const [newNum, setNewNum] = useState("")
   const [search, setSearch] = useState("")
   const [persons, setPersons] = useState([])
+  const [notif, setNotif] = useState(null);
 
   // Fetching data from the JSON server
   useEffect(() => {
@@ -44,6 +45,11 @@ function App() {
         setPersons(persons.concat(returnedNote));
       })
 
+      setNotif(`${newObj.name} added successfully`);
+      setTimeout(() => {
+          setNotif(null);
+        }, 5000)
+
     }
 
     else{
@@ -62,6 +68,11 @@ function App() {
         setPersons(persons.map(obj => obj.id !== prevObj.id ? obj : response.data))
 
       })
+
+      setNotif(`${newObj.name}'s number replaced`);
+      setTimeout(() => {
+          setNotif(null);
+        }, 5000)
 
     }
 
@@ -105,11 +116,11 @@ function App() {
     <div >
 
       <h1>Phone Book</h1>
-
-      <Notification message={"Testing"} />
       
       <form onSubmit={addData}>
         <div>
+
+          {notif == null ? <Notification message={null} /> : <Notification message={notif} />}
 
           <h3>Search Bar</h3>
 
