@@ -63,17 +63,29 @@ function App() {
         }
       }
 
-      axios.put(`http://localhost:3001/persons/${prevObj.id}`, newObj)
-      .then((response) => {
-        setPersons(persons.map(obj => obj.id !== prevObj.id ? obj : response.data))
+      try {
 
-      })
+        axios.put(`http://localhost:3001/persons/${prevObj.id}`, newObj)
+        .then((response) => {
+          console.log(response);
+          setPersons(persons.map(obj => obj.id !== prevObj.id ? obj : response.data))
 
-      setNotif(`${newObj.name}'s number replaced`);
-      setTimeout(() => {
-          setNotif(null);
-        }, 5000)
+          setNotif(`${newObj.name}'s number replaced`);
+          setTimeout(() => {
+            setNotif(null);
+          }, 5000)
 
+        })
+        .catch((error) => {
+          console.log(error.message);
+          setNotif(`${newObj.name} was already deleted from the server`)
+        })
+
+      }
+      catch(error){
+        console.log(error);
+      }
+      
     }
 
     // Want to reset regardless 
