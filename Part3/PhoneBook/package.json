@@ -1,0 +1,26 @@
+{
+  "name": "phonebook",
+  "version": "1.0.0",
+  "description": "Backend for the phonebook",
+  "main": "index.js",
+  "scripts": {
+    "test": "none",
+    "start": "node index.js",
+    "dev": "nodemon index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "TBD"
+  },
+  "keywords": [
+    "TBD"
+  ],
+  "author": "Janat",
+  "license": "MIT",
+  "devDependencies": {
+    "nodemon": "^2.0.15"
+  },
+  "dependencies": {
+    "express": "^4.17.3"
+  }
+}
