@@ -80,11 +80,15 @@ app.delete('/api/persons/:id', (req, res) => {
 app.post('/api/persons', (req, res) => {
     const body = req.body;
     if (body.name.length <= 0){
-        return res.status(400).end();
+        return res.status(400).json(
+            {error: 'Name missing'}
+        );
     }
 
     if (body.number.length <= 0){
-        return res.status(400).end();
+        return res.status(400).json(
+            {error: 'Number missing'}
+        );
     }
 
     const person = {
@@ -108,4 +112,5 @@ app.listen(port, () => {
 
 // The name or number is missing
 // The name already exists in the phonebook
+
 // Respond to requests like these with the appropriate status code, and also send back information that explains the reason for the error, e.g.:
