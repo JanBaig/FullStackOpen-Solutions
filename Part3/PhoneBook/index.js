@@ -4,6 +4,8 @@ const express = require('express');
 const app = express();
 const port = 3000;
 var morgan = require('morgan');
+const cors = require('cors');
+
 
 // Defining the MiddleWare
 const requestLogger = (req, res, next) => {
@@ -14,15 +16,14 @@ const requestLogger = (req, res, next) => {
     next()
 }
 
-app.use(express.json());
-
-//app.use(requestLogger);
-
 morgan.token('data', function func (req, res) {
     return JSON.stringify(req.body)
 })
 
+app.use(express.json());
+//app.use(requestLogger);
 app.use(morgan(':method :url :status :res[content-length] - :response-time ms :data'));
+app.use(cors());
 
 const generateId = () => {
     const newId = Math.random() * 100;
