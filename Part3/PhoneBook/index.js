@@ -3,7 +3,26 @@
 const express = require('express');
 const app = express();
 const port = 3000;
+var morgan = require('morgan');
+
+// Defining the MiddleWare
+const requestLogger = (req, res, next) => {
+    console.log('Method:', req.method)
+    console.log('Path:  ', req.path)
+    console.log('Body:  ', req.body)
+    console.log('---')
+    next()
+}
+
 app.use(express.json());
+
+//app.use(requestLogger);
+
+morgan.token('data', function func (req, res) {
+    return JSON.stringify(req.body)
+})
+
+app.use(morgan(':method :url :status :res[content-length] - :response-time ms :data'));
 
 const generateId = () => {
     const newId = Math.random() * 100;
@@ -54,7 +73,7 @@ app.get('/info', (req, res) => {
     res.end();
 })
 
-// Displays Single Persons
+// Displays Single Person
 app.get('/api/persons/:id', (req, res) => {
     const id = req.params.id;
     const note = persons.find(note => note.id == id);  
@@ -100,17 +119,8 @@ app.post('/api/persons', (req, res) => {
 
     persons = persons.concat(person);
     res.json(person);
-
 })
 
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}...`)
 })
-
-
-// Implement error handling for creating new entries. The request is not allowed to succeed, if:
-
-// The name or number is missing
-// The name already exists in the phonebook
-
-// Respond to requests like these with the appropriate status code, and also send back information that explains the reason for the error, e.g.:
