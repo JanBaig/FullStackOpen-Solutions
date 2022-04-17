@@ -2,7 +2,7 @@
 
 const express = require('express');
 const app = express();
-const port = 3001;
+const PORT = process.env.PORT || 3001;
 var morgan = require('morgan');
 const cors = require('cors');
 
@@ -122,8 +122,8 @@ app.post('/api/persons', (req, res) => {
     res.json(person);
 })
 
-app.listen(port, () => {
-  console.log(`Example app listening on port ${port}...`)
+app.listen(PORT, () => {
+  console.log(`Example app listening on port ${PORT}...`)
 })
 
 // Recall that we are randomly generating the person ID
