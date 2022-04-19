@@ -8,20 +8,15 @@ const cors = require('cors');
 
 
 // Defining the MiddleWare
-const requestLogger = (req, res, next) => {
-    console.log('Method:', req.method)
-    console.log('Path:  ', req.path)
-    console.log('Body:  ', req.body)
-    console.log('---')
-    next()
-}
 
 morgan.token('data', function func (req, res) {
     return JSON.stringify(req.body)
 })
-
 app.use(express.json());
-//app.use(requestLogger);
+
+// For the Frontend
+app.use(express.static('build'))
+
 app.use(morgan(':method :url :status :res[content-length] - :response-time ms :data'));
 app.use(cors());
 
