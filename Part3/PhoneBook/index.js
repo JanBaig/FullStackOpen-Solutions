@@ -9,13 +9,13 @@ const cors = require('cors');
 
 // Defining the MiddleWare
 
+// For the Frontend
+app.use(express.static('build'))
+
 morgan.token('data', function func (req, res) {
     return JSON.stringify(req.body)
 })
 app.use(express.json());
-
-// For the Frontend
-app.use(express.static('build'))
 
 app.use(morgan(':method :url :status :res[content-length] - :response-time ms :data'));
 app.use(cors());
