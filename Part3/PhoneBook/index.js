@@ -2,10 +2,15 @@
 
 const express = require('express');
 const app = express();
-const PORT = process.env.PORT || 3001;
+const port = process.env.PORT;
+
+if (port == null || port == "") {
+  port = 3001;
+}
+
+
 var morgan = require('morgan');
 const cors = require('cors');
-
 
 // Defining the MiddleWare
 
@@ -16,7 +21,6 @@ morgan.token('data', function func (req, res) {
     return JSON.stringify(req.body)
 })
 app.use(express.json());
-
 app.use(morgan(':method :url :status :res[content-length] - :response-time ms :data'));
 app.use(cors());
 
@@ -117,8 +121,8 @@ app.post('/api/persons', (req, res) => {
     res.json(person);
 })
 
-app.listen(PORT, () => {
-  console.log(`Example app listening on port ${PORT}...`)
-})
+app.listen(port);
 
 // Recall that we are randomly generating the person ID
+
+// For some reason, the live app does not run the server automatically. I wonder why that is the case...

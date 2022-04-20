@@ -65,7 +65,7 @@ function App() {
 
       try {
 
-        axios.put(`http://localhost:3001/api/persons/${prevObj.id}`, newObj)
+        axios.put(`/api/persons/${prevObj.id}`, newObj)
         .then((response) => {
           console.log(response);
           setPersons(persons.map(obj => obj.id !== prevObj.id ? obj : response.data))
