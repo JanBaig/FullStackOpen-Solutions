@@ -124,5 +124,3 @@ app.post('/api/persons', (req, res) => {
 app.listen(port);
 
 // Recall that we are randomly generating the person ID
-
-// For some reason, the live app does not run the server automatically. I wonder why that is the case...
