@@ -8,7 +8,6 @@ if (port == null || port == "") {
   port = 3001;
 }
 
-
 var morgan = require('morgan');
 const cors = require('cors');
 
@@ -121,8 +120,8 @@ app.post('/api/persons', (req, res) => {
     res.json(person);
 })
 
-app.listen(port);
+app.listen(port, () => {
+    console.log(`Server started on port ${port}...`)
+});
 
 // Recall that we are randomly generating the person ID
-
-// For some reason, the live app does not run the server automatically. I wonder why that is the case...
