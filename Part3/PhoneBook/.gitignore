@@ -1,4 +1,11 @@
-/node_modules
-npm-debug.log
-.DS_Store
-/*.env
+# /node_modules
+# npm-debug.log
+# .DS_Store
+# /*.env
+
+# dotenv environment variables file
+.env
+.env.test
+
+# Dependency directories
+node_modules/

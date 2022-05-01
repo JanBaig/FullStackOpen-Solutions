@@ -1,21 +1,23 @@
+
 // Creating a Node Server
 
 const express = require('express');
 const app = express();
+require('dotenv').config();
 let port = process.env.PORT;
+var morgan = require('morgan');
+const cors = require('cors');
+const personData2 = require('./models/person')
+
 
 if (port == null || port == "") {
   port = 3001;
 }
 
-var morgan = require('morgan');
-const cors = require('cors');
-
-// Defining the MiddleWare
-
 // For the Frontend
 app.use(express.static('build'))
 
+// Defining the MiddleWare
 morgan.token('data', function func (req, res) {
     return JSON.stringify(req.body)
 })
@@ -60,6 +62,12 @@ app.get('/', (req, res) => {
 // Displaying the Data
 app.get('/api/persons', (req, res) => {
     res.json(persons);
+
+    // personData.find({}).then(result => {
+    //     res.json(result)
+    // })
+
+    // mongoose.connection.close();
 
 })
 
