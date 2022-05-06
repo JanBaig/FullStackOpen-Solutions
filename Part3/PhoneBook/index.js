@@ -3,12 +3,12 @@
 
 const express = require('express');
 const app = express();
+// Using the env variables 
 require('dotenv').config();
 let port = process.env.PORT;
 var morgan = require('morgan');
 const cors = require('cors');
 const personData2 = require('./models/person')
-
 
 if (port == null || port == "") {
   port = 3001;
@@ -63,11 +63,13 @@ app.get('/', (req, res) => {
 app.get('/api/persons', (req, res) => {
     res.json(persons);
 
-    // personData.find({}).then(result => {
+    // personData2.find({}).then(result => {
     //     res.json(result)
     // })
 
     // mongoose.connection.close();
+
+    // MONGOOSE is defined in the other file, not this one... shows error
 
 })
 
@@ -132,4 +134,8 @@ app.listen(port, () => {
     console.log(`Server started on port ${port}...`)
 });
 
-// Recall that we are randomly generating the person ID
+// Recall that we are randomly generating the person ID (Can fix this later on to be ordered)
+
+// Current Errors Faced:
+// 1. Mongoose not being defined in this file. Line 70
+// 2. The .env file is missing...
