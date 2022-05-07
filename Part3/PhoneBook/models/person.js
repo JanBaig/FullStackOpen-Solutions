@@ -12,7 +12,7 @@ mongoose.connect(url)
 const personSchema = new mongoose.Schema({
   name: String,
   number: String,
-  id: Number
+  id: String // changing this into a String NOT Number anymore
 })
 
 // Formatting the Objects returned by Mongoose

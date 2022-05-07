@@ -73,7 +73,7 @@ app.get('/api/persons', (req, res) => {
 
 })
 
-// Displays Info
+// Displays General PhoneBook Info
 app.get('/info', (req, res) => {
     var length = persons.length;
     res.write('<h1>PhoneBook Info</h1>')
@@ -85,23 +85,28 @@ app.get('/info', (req, res) => {
 // Displays Single Person
 app.get('/api/persons/:id', (req, res) => {
     const id = req.params.id;
-    const note = persons.find(note => note.id == id);  
+    
+    // .then() executes the callback function if the search is successful
+    personData.findById(id).then(foundNote => {
+        res.json(foundNote)
+    })
 
-    // If invalid note, then note = undefined and error is fired
-    if (note) { 
-        res.json(note)
-    } else {
-        res.status(404).end()
-    }
+    // .catch() will have res.status(404).end()
+        // If invalid note, then note = undefined and error is fired
+
 
 })
 
 app.delete('/api/persons/:id', (req, res) => {
-    const id = req.params.id;
-    persons = persons.filter(person => person.id != id);
+    // persons = persons.filter(person => person.id != id);
+    const ID = req.params.id.toString()
+
+    personData.deleteOne( {_id: ID} ).then(deletedNote => {
+        console.log(deletedNote)
+    })
 
     // IF the ID DNE
-    res.status(204).end()
+    //res.status(204).end()
     
 })
 

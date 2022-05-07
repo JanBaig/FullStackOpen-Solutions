@@ -1,3 +1,5 @@
+// Helper Program
+
 const mongoose = require('mongoose'); 
 let password = "";
 let nameIn = "";
