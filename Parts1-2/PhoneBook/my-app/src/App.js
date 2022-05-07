@@ -18,6 +18,8 @@ function App() {
   useEffect(() => {
 
     // Make sure to run the JSON server first
+    
+    // Getting all the notes stored in the backend
     noteService.getAll()
     .then(initialNotes => {
       setPersons(initialNotes);
@@ -35,7 +37,7 @@ function App() {
     }
 
     var noDuplicates = persons.every((element)=>element.name != newName)
-
+ 
     if (noDuplicates){
       
       // Savings the notes to the Backend Server

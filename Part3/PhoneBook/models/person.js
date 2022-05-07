@@ -2,19 +2,20 @@ const mongoose = require('mongoose')
 const url = process.env.MONGODB_URI
 
 mongoose.connect(url)
-    .then(result => {
-        console.log('Connected to MongoDB')
-    })
-    .catch((error) => {
-        console.log('Error connecting to MongoDB: ', error.message)
-    })
+  .then(result => {
+      console.log('Connected to MongoDB')
+  })
+  .catch((error) => {
+      console.log('Error connecting to MongoDB: ', error.message)
+  })
 
 const personSchema = new mongoose.Schema({
-    name: String,
-    number: String,
-    id: Number
+  name: String,
+  number: String,
+  id: Number
 })
 
+// Formatting the Objects returned by Mongoose
 personSchema.set('toJSON', {
   transform: (document, returnedObject) => {
     returnedObject.id = returnedObject._id.toString()
@@ -23,4 +24,4 @@ personSchema.set('toJSON', {
   }
 })
 
-module.exports = mongoose.model('person', personSchema)
+module.exports = mongoose.model('person', personSchema) 

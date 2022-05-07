@@ -8,7 +8,7 @@ require('dotenv').config();
 let port = process.env.PORT;
 var morgan = require('morgan');
 const cors = require('cors');
-const personData2 = require('./models/person')
+const personData = require('./models/person')
 
 if (port == null || port == "") {
   port = 3001;
@@ -61,13 +61,13 @@ app.get('/', (req, res) => {
 
 // Displaying the Data
 app.get('/api/persons', (req, res) => {
-    res.json(persons);
+    //res.json(persons);
 
-    // personData2.find({}).then(result => {
-    //     res.json(result)
-    // })
+    personData.find({}).then(result => {
+        res.json(result)
+    })
 
-    // mongoose.connection.close();
+    //mongoose.connection.close();
 
     // MONGOOSE is defined in the other file, not this one... shows error
 
@@ -107,6 +107,7 @@ app.delete('/api/persons/:id', (req, res) => {
 
 app.post('/api/persons', (req, res) => {
     const body = req.body;
+
     if (body.name.length <= 0){
         return res.status(400).json(
             {error: 'Name missing'}
@@ -119,15 +120,20 @@ app.post('/api/persons', (req, res) => {
         );
     }
 
-    const person = {
-        "id": generateId(),
-        "name": body.name,
-        "number": body.number
+    const newPerson = new personData({
+        name: body.name,
+        number: body.number,
+        id: generateId()
+    })
 
-    }
+    console.log(newPerson)
+    newPerson.save().then(savedPerson => {
+        res.json(savedPerson);
+        console.log(savedPerson)
+    })
 
-    persons = persons.concat(person);
-    res.json(person);
+    // persons = persons.concat(person);
+    // res.json(person);
 })
 
 app.listen(port, () => {
@@ -138,4 +144,3 @@ app.listen(port, () => {
 
 // Current Errors Faced:
 // 1. Mongoose not being defined in this file. Line 70
-// 2. The .env file is missing...
