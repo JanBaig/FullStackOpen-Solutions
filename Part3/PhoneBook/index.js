@@ -59,7 +59,7 @@ app.get('/', (req, res) => {
     res.send("Hello!");
 })
 
-// Displaying the Data
+// Displaying All the Data
 app.get('/api/persons', (req, res) => {
     //res.json(persons);
 
@@ -104,6 +104,7 @@ app.get('/api/persons/:id', (req, res, next) => {
     
 })
 
+// Deleting a Person
 app.delete('/api/persons/:id', (req, res, next) => {
     // persons = persons.filter(person => person.id != id);
     const ID = req.params.id.toString()
@@ -119,49 +120,57 @@ app.delete('/api/persons/:id', (req, res, next) => {
     
 })
 
+// Creating a new Person using the client's given information (Server determines the resource's address)
 app.post('/api/persons', (req, res) => {
     const body = req.body;
 
-    personData.find({ name: body.name})
-    .then(() => {
-        console.log('Note duplicate found')
+    if (body.name.length <= 0){
+        return res.status(400).json(
+            {error: 'Name missing'}
+        );
+    }
+
+    if (body.number.length <= 0){
+        return res.status(400).json(
+            {error: 'Number missing'}
+        );
+    }
+
+    const newPerson = new personData({
+        name: body.name,
+        number: body.number,
+        id: generateId()
     })
-    .catch((error) => {
-        console.log('No duplicate found')
 
+    console.log(newPerson)
+    newPerson.save().then(savedPerson => {
+        res.json(savedPerson);
+        console.log(savedPerson)
     })
-
-    // if (body.name.length <= 0){
-    //     return res.status(400).json(
-    //         {error: 'Name missing'}
-    //     );
-    // }
-
-    // if (body.number.length <= 0){
-    //     return res.status(400).json(
-    //         {error: 'Number missing'}
-    //     );
-    // }
-
-    // const newPerson = new personData({
-    //     name: body.name,
-    //     number: body.number,
-    //     id: generateId()
-    // })
-
-    // console.log(newPerson)
-    // newPerson.save().then(savedPerson => {
-    //     res.json(savedPerson);
-    //     console.log(savedPerson)
-    // })
 
     // persons = persons.concat(person);
     // res.json(person);
 })
 
+// Updating a existing Person using the Client's given information (Server does not determine the resouce's address)
+app.put('/api/persons/:id', (req, res) => {
+    const body = req.body
+    
+    personData.find({name: body.name})
+    .then((duplicate) => {
+        console.log('A duplicate was found...', duplicate)
+        personData.findOneAndUpdate({ name: body.name }, { number: body.number }, {new: true}).then(updated => {
+            res.json(updated)
+        })
+    })
+    .catch(error => console.log('No duplicates. Error: ', error.message))
+
+})
+
 app.listen(port, () => {
     console.log(`Server started on port ${port}...`)
 });
+
 
 // For error Handling (Middleware)
 const errorHandler = (error, req, res, next) => {
@@ -182,8 +191,5 @@ app.use(errorHandler)
 
 // Recall that we are randomly generating the person ID (Can fix this later on to be ordered)
 
-// If the user tries to create a new phonebook entry for a person whose name is already in the phonebook, 
-// the frontend will try to update the phone number of the existing entry by making an HTTP PUT request to the entry's unique URL.
-// Modify the backend to support this request.
-// Verify that the frontend works after making your changes.
+// PUT vs POST: PUT if the client determines the resulting resource's address, POST if the server does it
 

@@ -66,7 +66,7 @@ function App() {
       }
 
       try {
-
+        
         axios.put(`/api/persons/${prevObj.id}`, newObj)
         .then((response) => {
           console.log(response);
@@ -100,6 +100,7 @@ function App() {
 
    // .toLowerCase() for case insensitivity
     const filtered = persons.filter((element)=>{
+      console.log(element.name)
       return element.name.toLowerCase().includes(search.toLowerCase());
     })
 
