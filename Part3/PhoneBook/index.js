@@ -82,28 +82,37 @@ app.get('/info', (req, res) => {
     res.end();
 })
 
-// Displays Single Person
-app.get('/api/persons/:id', (req, res) => {
+// Displays Single Person (Included the next parameter for error handling)
+app.get('/api/persons/:id', (req, res, next) => {
     const id = req.params.id;
     
     // .then() executes the callback function if the search is successful
-    personData.findById(id).then(foundNote => {
-        res.json(foundNote)
+    personData.findById(id)
+    .then(foundPerson=> {
+        if (foundPerson){
+            res.json(foundPerson)
+
+        } else { 
+            // If the note == null (Not found)
+            res.status(404).end()
+        }
     })
-
-    // .catch() will have res.status(404).end()
-        // If invalid note, then note = undefined and error is fired
-
-
+    .catch((error)=> {
+        console.log(error.name)
+        next(error)
+    })
+    
 })
 
-app.delete('/api/persons/:id', (req, res) => {
+app.delete('/api/persons/:id', (req, res, next) => {
     // persons = persons.filter(person => person.id != id);
     const ID = req.params.id.toString()
 
-    personData.deleteOne( {_id: ID} ).then(deletedNote => {
+    personData.deleteOne( {_id: ID} )
+    .then(deletedNote => {
         console.log(deletedNote)
     })
+    .catch(error => next(error))
 
     // IF the ID DNE
     //res.status(204).end()
@@ -113,29 +122,38 @@ app.delete('/api/persons/:id', (req, res) => {
 app.post('/api/persons', (req, res) => {
     const body = req.body;
 
-    if (body.name.length <= 0){
-        return res.status(400).json(
-            {error: 'Name missing'}
-        );
-    }
+    personData.find({ name: body.name})
+    .then(() => {
+        console.log('Note duplicate found')
+    })
+    .catch((error) => {
+        console.log('No duplicate found')
 
-    if (body.number.length <= 0){
-        return res.status(400).json(
-            {error: 'Number missing'}
-        );
-    }
-
-    const newPerson = new personData({
-        name: body.name,
-        number: body.number,
-        id: generateId()
     })
 
-    console.log(newPerson)
-    newPerson.save().then(savedPerson => {
-        res.json(savedPerson);
-        console.log(savedPerson)
-    })
+    // if (body.name.length <= 0){
+    //     return res.status(400).json(
+    //         {error: 'Name missing'}
+    //     );
+    // }
+
+    // if (body.number.length <= 0){
+    //     return res.status(400).json(
+    //         {error: 'Number missing'}
+    //     );
+    // }
+
+    // const newPerson = new personData({
+    //     name: body.name,
+    //     number: body.number,
+    //     id: generateId()
+    // })
+
+    // console.log(newPerson)
+    // newPerson.save().then(savedPerson => {
+    //     res.json(savedPerson);
+    //     console.log(savedPerson)
+    // })
 
     // persons = persons.concat(person);
     // res.json(person);
@@ -145,7 +163,27 @@ app.listen(port, () => {
     console.log(`Server started on port ${port}...`)
 });
 
+// For error Handling (Middleware)
+const errorHandler = (error, req, res, next) => {
+
+    console.log(error.name)
+    console.log(error.message)
+    if (error.name === 'CastError'){
+        return res.status(400).send({ error: "Misformatted ID"})
+    }
+
+    // If the error isn't a CastError, we pass it to the default express Error Handler
+    
+    next(error)
+
+}
+app.use(errorHandler)
+
+
 // Recall that we are randomly generating the person ID (Can fix this later on to be ordered)
 
-// Current Errors Faced:
-// 1. Mongoose not being defined in this file. Line 70
+// If the user tries to create a new phonebook entry for a person whose name is already in the phonebook, 
+// the frontend will try to update the phone number of the existing entry by making an HTTP PUT request to the entry's unique URL.
+// Modify the backend to support this request.
+// Verify that the frontend works after making your changes.
+
