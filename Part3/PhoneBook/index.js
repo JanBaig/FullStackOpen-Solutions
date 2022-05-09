@@ -121,20 +121,8 @@ app.delete('/api/persons/:id', (req, res, next) => {
 })
 
 // Creating a new Person using the client's given information (Server determines the resource's address)
-app.post('/api/persons', (req, res) => {
+app.post('/api/persons', (req, res, next) => {
     const body = req.body;
-
-    if (body.name.length <= 0){
-        return res.status(400).json(
-            {error: 'Name missing'}
-        );
-    }
-
-    if (body.number.length <= 0){
-        return res.status(400).json(
-            {error: 'Number missing'}
-        );
-    }
 
     const newPerson = new personData({
         name: body.name,
@@ -143,25 +131,29 @@ app.post('/api/persons', (req, res) => {
     })
 
     console.log(newPerson)
-    newPerson.save().then(savedPerson => {
+    newPerson.save()
+    .then(savedPerson => {
         res.json(savedPerson);
-        console.log(savedPerson)
     })
+    .catch(error => next(error))
 
-    // persons = persons.concat(person);
-    // res.json(person);
 })
 
 // Updating a existing Person using the Client's given information (Server does not determine the resouce's address)
-app.put('/api/persons/:id', (req, res) => {
+app.put('/api/persons/:id', (req, res, next) => {
     const body = req.body
     
     personData.find({name: body.name})
     .then((duplicate) => {
         console.log('A duplicate was found...', duplicate)
-        personData.findOneAndUpdate({ name: body.name }, { number: body.number }, {new: true}).then(updated => {
-            res.json(updated)
-        })
+        personData.findOneAndUpdate(
+            { name: body.name }, 
+            { number: body.number }, 
+            {new: true, runValidators: true, context: 'query' })
+            .then(updated => {
+                res.json(updated)
+            })
+            .catch(error => next(error)) // If does not fit schema requirements
     })
     .catch(error => console.log('No duplicates. Error: ', error.message))
 
@@ -171,7 +163,6 @@ app.listen(port, () => {
     console.log(`Server started on port ${port}...`)
 });
 
-
 // For error Handling (Middleware)
 const errorHandler = (error, req, res, next) => {
 
@@ -179,11 +170,13 @@ const errorHandler = (error, req, res, next) => {
     console.log(error.message)
     if (error.name === 'CastError'){
         return res.status(400).send({ error: "Misformatted ID"})
+    } 
+    else if (error.name === 'ValidationError') {
+        return res.status(400).json({ error: error.message })
     }
 
-    // If the error isn't a CastError, we pass it to the default express Error Handler
-    
-    next(error)
+    // If the error isn't part of the above, we pass to the default express Error Handler
+    next(error) 
 
 }
 app.use(errorHandler)

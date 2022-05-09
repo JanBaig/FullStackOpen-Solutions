@@ -8,6 +8,7 @@ const getAll = () => {
 
 const create = (newObj) => {
     const request = axios.post(baseUrl, newObj);
+    console.log('This is the requset inside notes: ',request)
     return request.then(response => response.data);
 }
 

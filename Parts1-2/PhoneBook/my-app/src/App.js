@@ -40,14 +40,24 @@ function App() {
  
     if (noDuplicates){
       
-      // Savings the notes to the Backend Server
+      // Savings the notes to the Backend Server (POST request)
+      
       noteService.create(newObj)
-      // Returned note is actually just the response.data
+
+        // Returned note is actually just the response.data
       .then(returnedNote => {
         setPersons(persons.concat(returnedNote));
+        setNotif(`${newObj.name} added successfully`);
+      })
+      .catch(error => {
+        if (error.response){
+          setNotif('Error: ' + error.response.data.error)
+        } 
+        else if (error.request){
+          console.log(error.request);
+        }
       })
 
-      setNotif(`${newObj.name} added successfully`);
       setTimeout(() => {
           setNotif(null);
         }, 5000)
@@ -65,28 +75,19 @@ function App() {
         }
       }
 
-      try {
-        
-        axios.put(`/api/persons/${prevObj.id}`, newObj)
-        .then((response) => {
-          console.log(response);
-          setPersons(persons.map(obj => obj.id !== prevObj.id ? obj : response.data))
+      axios.put(`/api/persons/${prevObj.id}`, newObj)
+      .then((response) => {
+        setPersons(persons.map(obj => obj.id !== prevObj.id ? obj : response.data))
+        setNotif(`${newObj.name}'s number replaced`);
 
-          setNotif(`${newObj.name}'s number replaced`);
-          setTimeout(() => {
-            setNotif(null);
-          }, 5000)
+      })
+      .catch((error) => {
+        setNotif("Error: "+ error.response.data.error)
+      })
 
-        })
-        .catch((error) => {
-          console.log(error.message);
-          setNotif(`${newObj.name} was already deleted from the server`)
-        })
-
-      }
-      catch(error){
-        console.log(error);
-      }
+      setTimeout(() => {
+        setNotif(null);
+      }, 5000)
       
     }
 
@@ -100,7 +101,6 @@ function App() {
 
    // .toLowerCase() for case insensitivity
     const filtered = persons.filter((element)=>{
-      console.log(element.name)
       return element.name.toLowerCase().includes(search.toLowerCase());
     })
 
@@ -174,4 +174,3 @@ function App() {
 }
 
 export default App;
-

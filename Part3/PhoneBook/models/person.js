@@ -10,9 +10,17 @@ mongoose.connect(url)
   })
 
 const personSchema = new mongoose.Schema({
-  name: String,
-  number: String,
-  id: String // changing this into a String NOT Number anymore
+  name: {
+    type: String,
+    minLength: 3,
+    required: true
+  },
+  number: {
+    type: String,
+    minLength: 9,
+    required: true
+  },
+  id: String // NOT Number anymore
 })
 
 // Formatting the Objects returned by Mongoose
