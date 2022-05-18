@@ -1,4 +1,10 @@
-POST http://localhost:3003/api/blogs
+@port = 3000
+
+### Get all blogs
+GET http://localhost:{{port}}/api/blogs
+
+#### Add a blog
+POST http://localhost:{{port}}/api/blogs
 Content-Type: application/json
 
 {
