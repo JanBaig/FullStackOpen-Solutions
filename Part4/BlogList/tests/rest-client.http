@@ -14,3 +14,18 @@ Content-Type: application/json
     "likes": 3
 
 }
+
+#### Remove a blog
+
+DELETE http://localhost:{{port}}/api/blogs/6284ec3caba6f5fc00a65a4d 
+
+#### Update a blog
+PUT http://localhost:{{port}}/api/blogs/6284ec3caba6f5fc00a65a4d
+Content-Type: application/json
+
+{
+    "title": "Testing #2",
+    "author": "Jan",
+    "url": "new URL",
+    "likes": 10
+}
