@@ -25,7 +25,7 @@ const errorHandler = (error, req, res, next) => {
     return res.status(401).json({error: 'invalid token'})
   } 
   else if (error.name === 'TokenExpiredError') {
-    return response.status(401).json({error: 'token expired'})
+    return res.status(401).json({error: 'token expired'})
   }
 
   // Anything else passed to default express error handler
@@ -33,8 +33,19 @@ const errorHandler = (error, req, res, next) => {
 
 }
 
+const tokenExtractor = (req, res, next) => {
+  const authorization = req.get('authorization')
+  if (authorization && authorization.toLowerCase().startsWith('bearer ')) {
+    req.token = authorization.substring(7) // excludes the 'bearer' part with the substring
+  }
+  
+  next()
+
+}
+
 module.exports = {
   requestLogger,
   unknownEndpoint,
-  errorHandler
+  errorHandler,
+  tokenExtractor
 }

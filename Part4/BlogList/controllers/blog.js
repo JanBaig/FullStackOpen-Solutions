@@ -27,8 +27,8 @@ blogRouter.get('/', async (req, res) => {
 blogRouter.post('/', async (req, res) => {
 
     const body = req.body;
-    const token = getTokenFrom(req)
-    const decodedToken = jwt.verify(token, config.SECRET)
+    // const token = getTokenFrom(req)
+    const decodedToken = jwt.verify(req.token, config.SECRET)
     
     // .id is the ID of the user who owns that token
     if (!decodedToken.id) {
@@ -57,9 +57,22 @@ blogRouter.post('/', async (req, res) => {
 
 blogRouter.delete('/:id', async (req, res) => {
 
-    const id = req.params.id;
-    await blogModel.findOneAndDelete(id)
-    res.status(204).end()
+    const blogDeleteId = req.params.id;
+
+    // Have to use the token to check if the user own's the blog
+    const decodedToken = jwt.verify(req.token, config.SECRET)
+    if (!decodedToken.id) {
+        return res.status(401).json({ error: 'token missing or invalid' })
+    }
+    
+    // Check to see if the blog (to be deleted)'s user property has the same userID as the token's .id
+    const blog = await blogModel.findById(blogDeleteId);
+    //console.log('From blog: ', blog.user, 'From token: ', decodedToken.id)
+    if (blog.user.toString() === decodedToken.id.toString()){
+        await blogModel.findOneAndDelete(blogDeleteId)
+        return res.status(204).end()
+    }
+    return res.status(401).json({ error: 'Not your blog! Cannot delete this' })
 
 })
 

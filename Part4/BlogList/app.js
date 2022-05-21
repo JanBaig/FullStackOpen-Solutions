@@ -16,6 +16,7 @@ const middleware = require('./utils/middleware')
 // Middleware
 app.use(cors())
 app.use(express.json())
+app.use(middleware.tokenExtractor)
 app.use(middleware.requestLogger)
 app.use('/api/blogs', blogRouter) // Used only if url starts with './api/blogs'
 app.use('/api/user', userRouter)
