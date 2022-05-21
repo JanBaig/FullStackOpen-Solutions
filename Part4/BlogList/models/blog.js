@@ -15,12 +15,15 @@ const blogSchema = new mongoose.Schema({
     author: String,
     url: {type: String, required: true},
     likes: {type: Number, default: 0},
+    // UserID of documents of type 'user'
     user: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'user'
     }
 })
 
+// The format of the blog when we send it out as a response
+// Doesn't alter the actual blog stored in the DB (Just the returned JSON version of it)
 blogSchema.set('toJSON', {
     transform: (document, returnedObject) => {
       returnedObject.id = returnedObject._id.toString()

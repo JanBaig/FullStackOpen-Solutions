@@ -10,6 +10,7 @@ const blogModel = require('./models/blog')
 require('express-async-errors')
 const blogRouter = require('./controllers/blog');
 const userRouter = require('./controllers/user')
+const loginRouter = require('./controllers/login')
 const middleware = require('./utils/middleware')
 
 // Middleware
@@ -18,6 +19,7 @@ app.use(express.json())
 app.use(middleware.requestLogger)
 app.use('/api/blogs', blogRouter) // Used only if url starts with './api/blogs'
 app.use('/api/user', userRouter)
+app.use('/api/login', loginRouter)
 app.use(middleware.unknownEndpoint) // When the endpoint is unknown
 app.use(middleware.errorHandler)
 

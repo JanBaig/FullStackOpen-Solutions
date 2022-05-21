@@ -6,13 +6,13 @@ GET http://localhost:{{port}}/api/blogs
 #### Add a blog
 POST http://localhost:{{port}}/api/blogs
 Content-Type: application/json
+Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImphbjMiLCJpZCI6IjYyODhjZmZjNDg1NDU1YTQzNDg2OWMwNCIsImlhdCI6MTY1MzEzNTMzOH0.32K2RQrZebk2AdzSidODcR3HMMzana8gVeEvClUmMvo
 
 {
-    "title": "Jan's Note",
-    "author": "Testing author",
+    "title": "Jan's Note2",
+    "author": "Testing",
     "url": "some URL",
-    "likes": 3,
-    "userId": "6288318a4f03daeef80dd7d8"
+    "likes": 3
 
 }
 
@@ -40,8 +40,16 @@ POST http://localhost:{{port}}/api/user
 Content-Type: application/json
 
 {
-
-    "username": "jan2",
+    "username": "jan3",
     "name": "Jan",
-    "password": "12345h454545rhr"
+    "password": "jan3"
+}
+
+#### User Login
+POST http://localhost:{{port}}/api/login 
+Content-Type: application/json 
+
+{
+    "username": "jan3",
+    "password": "jan3"
 }

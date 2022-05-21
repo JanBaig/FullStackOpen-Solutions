@@ -180,9 +180,6 @@ describe('testing the users API', () => {
 
     })
 
-    
-
-
 })
 
 afterAll(() => {
