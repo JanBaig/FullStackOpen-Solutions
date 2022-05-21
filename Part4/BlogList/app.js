@@ -23,6 +23,7 @@ app.use('/api/user', userRouter)
 app.use('/api/login', loginRouter)
 app.use(middleware.unknownEndpoint) // When the endpoint is unknown
 app.use(middleware.errorHandler)
+// app.use(middleware.userExtractor) // finding user who owns the token
 
 // express.static build goes somewhere in here
 

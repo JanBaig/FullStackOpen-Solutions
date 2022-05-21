@@ -4,18 +4,8 @@ const userModel = require('../models/user')
 const jwt = require('jsonwebtoken')
 const config = require('../utils/config');
 const loggerv = require('../utils/logger')
+const middleware = require('../utils/middleware')
 // Initial endpoint is '/api/blogs'
-
-const getTokenFrom = req => {
-
-    // req.get() function returns the specified HTTP request header field
-    const authorization = req.get('authorization')
-    if (authorization && authorization.toLowerCase().startsWith('bearer ')) {
-        return authorization.substring(7) // excludes the 'bearer' part with the substring
-    }
-    return null
-
-}
 
 blogRouter.get('/', async (req, res) => {
     const blogs = await blogModel.find({}).populate('user', {username: 1, name: 1})
@@ -24,17 +14,10 @@ blogRouter.get('/', async (req, res) => {
 })
 
 // Can only create a new blog with a registered user's token
-blogRouter.post('/', async (req, res) => {
+blogRouter.post('/', middleware.userExtractor, async (req, res) => {
 
     const body = req.body;
-    // const token = getTokenFrom(req)
-    const decodedToken = jwt.verify(req.token, config.SECRET)
-    
-    // .id is the ID of the user who owns that token
-    if (!decodedToken.id) {
-        return res.status(401).json({ error: 'token missing or invalid' })
-    }
-    const user = await userModel.findById(decodedToken.id) // finding user who created blog
+    const user = req.user
 
     const blog = new blogModel({
 
@@ -42,7 +25,6 @@ blogRouter.post('/', async (req, res) => {
         author: body.author,
         url: body.url,
         user: user._id
-
     })
 
     const savedNote = await blog.save()
@@ -55,20 +37,14 @@ blogRouter.post('/', async (req, res) => {
     
 })
 
-blogRouter.delete('/:id', async (req, res) => {
+blogRouter.delete('/:id', middleware.userExtractor, async (req, res) => {
 
     const blogDeleteId = req.params.id;
-
-    // Have to use the token to check if the user own's the blog
-    const decodedToken = jwt.verify(req.token, config.SECRET)
-    if (!decodedToken.id) {
-        return res.status(401).json({ error: 'token missing or invalid' })
-    }
+    const user = req.user // from tokenID
     
     // Check to see if the blog (to be deleted)'s user property has the same userID as the token's .id
     const blog = await blogModel.findById(blogDeleteId);
-    //console.log('From blog: ', blog.user, 'From token: ', decodedToken.id)
-    if (blog.user.toString() === decodedToken.id.toString()){
+    if (blog.user.toString() === user._id.toString()){
         await blogModel.findOneAndDelete(blogDeleteId)
         return res.status(204).end()
     }
