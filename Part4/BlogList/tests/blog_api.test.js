@@ -1,21 +1,24 @@
 const mongoose = require('mongoose')
 const app = require('../app') 
 const blogModel = require('../models/blog')
+const userModel = require('../models/user')
+const bcrypt = require('bcrypt')
 const supertest = require('supertest') 
 const testHelper = require('./test_helper')
 const api = supertest(app)
 
-// Before any tests are executed 
-beforeEach(async () => {
-    await blogModel.deleteMany({})
-    
-    for (let blog of testHelper.blogs) {
-      let blogObject = new blogModel(blog)
-      await blogObject.save()
-    }
-})
 
 describe('testing the blog API', () => {
+
+    // Before any tests are executed 
+    beforeEach(async () => {
+        await blogModel.deleteMany({})
+        
+        for (let blog of testHelper.blogs) {
+            let blogObject = new blogModel(blog)
+            await blogObject.save()
+        }
+    })
 
     describe('testing single blogs', () => {
 
@@ -115,6 +118,71 @@ describe('testing the blog API', () => {
 
     })
    
+})
+
+describe('testing the users API', () => {
+
+    // Before any tests are executed
+    beforeEach(async () => {
+
+        await userModel.deleteMany({})
+
+        const passwordHash = await bcrypt.hash('sekret', 10)
+        const user = new userModel({ username: 'root', passwordHash })
+
+        await user.save()
+
+    })
+
+    test('new user added successfully', async () => {
+
+        const usersAtStart = await testHelper.usersInDB()
+
+        const newUser = {
+            username: 'mluukkai',
+            name: 'Matti Luukkainen',
+            password: 'salainen',
+        }
+      
+        await api
+            .post('/api/user')
+            .send(newUser)
+            .expect(201)
+            .expect('Content-Type', /application\/json/)
+      
+        const usersAtEnd = await testHelper.usersInDB()
+        expect(usersAtEnd).toHaveLength(usersAtStart.length + 1)
+    
+        const usernames = usersAtEnd.map(u => u.username)
+        expect(usernames).toContain(newUser.username)
+
+    })
+
+    test('creation fails with proper statuscode and message if username already taken', async () => {
+        const usersAtStart = await testHelper.usersInDB()
+    
+        const newUser = {
+          username: 'root',
+          name: 'Superuser',
+          password: 'salainen',
+        }
+    
+        const result = await api
+          .post('/api/user')
+          .send(newUser)
+          .expect(400)
+          .expect('Content-Type', /application\/json/)
+    
+        expect(result.body.error).toContain('username must be unique')
+    
+        const usersAtEnd = await testHelper.usersInDB()
+        expect(usersAtEnd).toEqual(usersAtStart)
+
+    })
+
+    
+
+
 })
 
 afterAll(() => {

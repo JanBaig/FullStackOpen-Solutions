@@ -7,7 +7,9 @@ const cors = require('cors')
 const config = require('./utils/config')
 const logger = require('./utils/logger')
 const blogModel = require('./models/blog')
+require('express-async-errors')
 const blogRouter = require('./controllers/blog');
+const userRouter = require('./controllers/user')
 const middleware = require('./utils/middleware')
 
 // Middleware
@@ -15,6 +17,7 @@ app.use(cors())
 app.use(express.json())
 app.use(middleware.requestLogger)
 app.use('/api/blogs', blogRouter) // Used only if url starts with './api/blogs'
+app.use('/api/user', userRouter)
 app.use(middleware.unknownEndpoint) // When the endpoint is unknown
 app.use(middleware.errorHandler)
 

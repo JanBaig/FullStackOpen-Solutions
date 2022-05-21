@@ -8,10 +8,11 @@ POST http://localhost:{{port}}/api/blogs
 Content-Type: application/json
 
 {
-    "title": "Testing #1",
+    "title": "Jan's Note",
     "author": "Testing author",
     "url": "some URL",
-    "likes": 3
+    "likes": 3,
+    "userId": "6288318a4f03daeef80dd7d8"
 
 }
 
@@ -28,4 +29,19 @@ Content-Type: application/json
     "author": "Jan",
     "url": "new URL",
     "likes": 10
+}
+
+#### Getting all Users
+GET http://localhost:{{port}}/api/user
+
+
+#### Adding Users
+POST http://localhost:{{port}}/api/user
+Content-Type: application/json
+
+{
+
+    "username": "jan2",
+    "name": "Jan",
+    "password": "12345h454545rhr"
 }

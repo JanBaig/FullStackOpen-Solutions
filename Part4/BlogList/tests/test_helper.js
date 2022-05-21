@@ -1,6 +1,7 @@
 // Helper Module for Testing
 
 const blogModel = require('../models/blog')
+const userModel = require('../models/user')
 
 const blogs = [
     {
@@ -98,6 +99,13 @@ const idExists = async () => {
   return blogsContainId.map(blog => blog.toJSON())
 }
 
+const usersInDB = async () => {
+  const users = await userModel.find({})
+  // The toJSON method excludes the user's password
+  return users.map(u => u.toJSON())
+
+
+}
 
 module.exports = {
   totalLikes,
@@ -105,7 +113,8 @@ module.exports = {
   blogs,
   listWithOneBlog,
   blogsInDB,
-  idExists
+  idExists,
+  usersInDB
 }
 
 // * It is IMPORTANT to convert the given blogs in the DB with .toJSON() because the properties of the blogs in the DB we CANNOT change.
