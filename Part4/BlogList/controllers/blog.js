@@ -2,15 +2,16 @@ const blogRouter = require('express').Router();
 const blogModel = require('../models/blog');
 const userModel = require('../models/user')
 const jwt = require('jsonwebtoken')
-const config = require('../utils/config')
-
+const config = require('../utils/config');
+const loggerv = require('../utils/logger')
 // Initial endpoint is '/api/blogs'
 
 const getTokenFrom = req => {
 
+    // req.get() function returns the specified HTTP request header field
     const authorization = req.get('authorization')
     if (authorization && authorization.toLowerCase().startsWith('bearer ')) {
-        return authorization.substring(7)
+        return authorization.substring(7) // excludes the 'bearer' part with the substring
     }
     return null
 
@@ -22,16 +23,18 @@ blogRouter.get('/', async (req, res) => {
 
 })
 
+// Can only create a new blog with a registered user's token
 blogRouter.post('/', async (req, res) => {
 
-    // When we're sending the req, the 'userID' needs to be known (An unknown user cannot possibly post a blog)
     const body = req.body;
     const token = getTokenFrom(req)
     const decodedToken = jwt.verify(token, config.SECRET)
+    
+    // .id is the ID of the user who owns that token
     if (!decodedToken.id) {
         return res.status(401).json({ error: 'token missing or invalid' })
     }
-    const user = await userModel.findById(decodedToken.id) // the returned JSON version of the "._id" as "id"
+    const user = await userModel.findById(decodedToken.id) // finding user who created blog
 
     const blog = new blogModel({
 
@@ -77,4 +80,7 @@ blogRouter.put('/:id', async (req, res) => {
 })
 
 module.exports = blogRouter 
+
+
+// The server's protected routes will check for a valid JWT in the Authorization header (Comes in the request header), and if it's present, the user will be allowed to access protected resources
 
