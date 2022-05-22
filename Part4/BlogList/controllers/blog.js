@@ -69,5 +69,6 @@ blogRouter.put('/:id', async (req, res) => {
 
 module.exports = blogRouter 
 
-// The server's protected routes will check for a valid JWT in the Authorization header (Comes in the request header), and if it's present, the user will be allowed to access protected resources
+// The server's protected routes will check for a valid JWT in the Authorization header (Comes in the request header), and if it's present,
+// the user will be allowed to access protected resources
 

@@ -10,14 +10,16 @@ loginRouter.post('/', async (req, res) => {
 
   const { username, password } = req.body;
   const user = await userModel.findOne({ username })
+  
 
   // Actual password is not saved into the DB. Only the hash version. Therefore, use bcrypt.compare(hashed, unHashed)
   const passwordCorrect = user === null ? false : await bcrypt.compare(password, user.passwordHash)
+  
 
   if (!(user && passwordCorrect)) {
-      return res.status(401).json({
-        error: 'invalid username or password'
-      })
+    return res.status(401).json({
+      error: 'invalid username or password'
+    })
   }
 
   // If the user if found and the password is correct (true) // payload?

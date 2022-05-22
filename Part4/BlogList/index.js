@@ -12,10 +12,7 @@ server.listen(config.PORT, () => {
 })
 
 
-// Something I would like to better understand
-// 1. Read the encryption docs
-// 2. Read the jwt docs
-// 3. Throughly fix the tests after going through a round of high level testing 
-// 4. Populate?
-// 5. High level view of the project. How does this relate to that? What could have been done differently?
-// 6. FSO Excercises
+
+// Last exercise
+// After adding token based authentication the tests for adding a new blog broke down. Fix the tests.
+// Also write a new test to ensure adding a blog fails with the proper status code 401 Unauthorized if a token is not provided.

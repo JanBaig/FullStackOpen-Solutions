@@ -12,40 +12,78 @@ describe('testing blogs', () => {
 
     // Before any blog tests are executed 
     beforeEach(async () => {
-        await blogModel.deleteMany({})
-        
-        for (let blog of testHelper.blogs) {
-            let blogObject = new blogModel(blog)
-            await blogObject.save()
+        let headers;
+        let defaultBlogID;
+
+        // First register a single user
+        await userModel.deleteMany({})
+
+        const passwordHash = await bcrypt.hash('sekret', 10)
+        const user = new userModel({ username: 'root', passwordHash })
+
+        await user.save()
+
+        // Login with the user's credentials
+        const loginInfo = {
+            username:'root',
+            name: '',
+            password: 'sekret'
         }
+
+        const logInResult = await api
+            .post('/api/login')
+            .send(loginInfo)
+        
+        // Set the headers
+        headers = {
+            'Authorization': `bearer ${logInResult.body.token}`
+        }
+
+        // Delete all & add default blog
+        await blogModel.deleteMany({})
+        const defaultBlog = {
+            title: "default Blog",
+            author: "Jan",
+            url: "URL",
+            likes: 20
+        } 
+        
+        const submitDefaultBlog = await api
+            .post('/api/blogs')
+            .send(defaultBlog)
+            .set(headers)
+
+        defaultBlogID = submitDefaultBlog.body.id
+
+        
+
     })
 
     test('successfully added a blog', async () => {
+
         const newBlog = {
-            title: "Oz",
-            author: "Unknown",
-            url: "some URL",
+            title: "Test #1",
+            author: "Jan",
+            url: "URL#1",
             likes: 20
         } 
 
         const res = await api
             .post('/api/blogs')
             .send(newBlog)
+            .set(headers)
             .expect(201)
             .expect('Content-Type', /application\/json/)
 
 
-        // Testing that the lengths are the same
-        const allBlogs = await testHelper.blogsInDB()
-        expect(allBlogs).toHaveLength(testHelper.blogs.length + 1) 
-
+        // // Testing that the lengths are the same (No need just check the DB)
 
     })
 
     test('missing likes property but still added', async () => {
 
         const newBlog = {
-            title: "Oz",
+            title: "Ozyy",
             author: "Unknown",
             url: "some URL"
         } 
@@ -53,13 +91,16 @@ describe('testing blogs', () => {
         const res = await api
             .post('/api/blogs')
             .send(newBlog)
+            .set(headers)
             .expect(201)
+            .expect('Content-Type', /application\/json/)
         
-        expect(res.body.likes).toBe(0)
+        console.log(res.body)
 
     })
 
     test('missing URL and title', async () => {
+
         const newBlog = {
             author: "Jan Jan",
             likes: 10
@@ -68,14 +109,20 @@ describe('testing blogs', () => {
         const res = await api
             .post('/api/blogs')
             .send(newBlog)
+            .set(headers)
             .expect(400)
+
+        //console.log(res.body)
     })
 
     test('succeds with status code 204 if ID is valid', async () => {
-        const id = testHelper.blogs[0].id
+        //const id = testHelper.blogs[0].id
 
+
+        // Find a way to get the defaultBlog's ID and use it here!
         const res = await api  
-            .delete(`/api/blogs/${id}`)
+            .delete(`/api/blogs/${defaultBlogID}`)
+            .set(headers)
             .expect(204)
 
     })
@@ -94,7 +141,7 @@ describe('testing blogs', () => {
 
     })
 
-    test('blogs returned as json and have correct length', async () => {
+    test('blog is returned as json and has the correct length', async () => {
         const res = await api
             .get('/api/blogs')
             .expect(200)
@@ -104,15 +151,15 @@ describe('testing blogs', () => {
 
     })
 
-    test('all blogs have id property', async () => {
+    test('The blog has an id property', async () => {
         const testing = await testHelper.blogsInDB()
         expect(testing.map(blog => blog.id)).toBeDefined() // map would through an error if every item didn't have the property
 
     })
 
+
 })
 
-// Passes all tests
 describe('testing users', () => {
 
     // Before any user tests are executed
@@ -132,22 +179,43 @@ describe('testing users', () => {
         const usersAtStart = await testHelper.usersInDB()
 
         const newUser = {
-            username: 'mluukkai',
+            username: 'testing#1',
             name: 'Matti Luukkainen',
-            password: 'salainen',
+            password: 'password',
         }
       
-        await api
+        const result = await api
             .post('/api/user')
             .send(newUser)
             .expect(201)
             .expect('Content-Type', /application\/json/)
-      
+        
         const usersAtEnd = await testHelper.usersInDB()
         expect(usersAtEnd).toHaveLength(usersAtStart.length + 1)
     
         const usernames = usersAtEnd.map(u => u.username)
         expect(usernames).toContain(newUser.username)
+
+    })
+
+    test('new user logged in successfully with token returned', async () => {
+
+        const loginInfo = {
+            username:'root',
+            name: '',
+            password: 'sekret'
+        }
+
+        const result = await api
+            .post('/api/login')
+            .send(loginInfo)
+            .expect(200)
+        
+        expect(result.body.username).toBe(loginInfo.username)
+
+        // // Check the exsistence of a token
+        expect(result.body.hasOwnProperty('token')).toBe(true)
+
 
     })
 

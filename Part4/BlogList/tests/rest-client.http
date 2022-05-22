@@ -6,8 +6,7 @@ GET http://localhost:{{port}}/api/blogs
 #### Add a blog
 POST http://localhost:{{port}}/api/blogs
 Content-Type: application/json
-Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IkphbkphbjIiLCJpZCI6IjYyODk3NTE1NmYyODU4MWMxMTI2YzVmOSIsImlhdCI6MTY1MzE3NTU4MywiZXhwIjoxNjUzMTc5MTgzfQ.kJrsQ_A1mAHwKz541uWpykhxvNTfrtSCwZE8gHZC3n8
-
+Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IlRlc3RpbmciLCJpZCI6IjYyOGE3YTcwMzlkMzQ3NzFkZDU0NWFlNSIsImlhdCI6MTY1MzI0MjQ5MywiZXhwIjoxNjUzMjQ2MDkzfQ.L84IvbHZfwEROcDDajXJMf1uvGQo-2N0vy_h-q7v0Jo
 { 
     "title": "Testing #10 UPDATED",
     "author": "Jan",
@@ -41,9 +40,9 @@ POST http://localhost:{{port}}/api/user
 Content-Type: application/json
 
 {
-    "username": "JanJan2",
+    "username": "Testing again",
     "name": "Jan",
-    "password": "1234"
+    "password": "12345"
 }
 
 #### User Login
@@ -51,6 +50,6 @@ POST http://localhost:{{port}}/api/login
 Content-Type: application/json 
 
 {
-    "username": "JanJan2",
-    "password": "1234"
+    "username": "Testing again",
+    "password": "12345"
 }
