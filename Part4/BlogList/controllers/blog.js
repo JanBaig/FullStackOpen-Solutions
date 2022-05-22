@@ -17,10 +17,9 @@ blogRouter.get('/', async (req, res) => {
 blogRouter.post('/', middleware.userExtractor, async (req, res) => {
 
     const body = req.body;
-    const user = req.user
+    const user = req.user // from the middleware
 
     const blog = new blogModel({
-
         title: body.title,
         author: body.author,
         url: body.url,
@@ -69,7 +68,6 @@ blogRouter.put('/:id', async (req, res) => {
 })
 
 module.exports = blogRouter 
-
 
 // The server's protected routes will check for a valid JWT in the Authorization header (Comes in the request header), and if it's present, the user will be allowed to access protected resources
 
