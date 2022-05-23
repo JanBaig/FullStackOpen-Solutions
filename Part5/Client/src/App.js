@@ -2,10 +2,12 @@ import { useState, useEffect } from 'react'
 import Blog from './components/Blog'
 import blogService from './services/blogs'
 import loginService from './services/login'
+import CreateNew from './components/CreateNew'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
   const [errorNotif, setErrorNotif] = useState("")
+  const [notif, setNotif] = useState("")
   const [username, setUsername] = useState("")
   const [password, setPassword] = useState("")
   const [user, setUser] = useState(null) 
@@ -28,7 +30,6 @@ const App = () => {
 
   const hangleLogin = async (e) => {
     e.preventDefault()
-    console.log('Logged in: ', username, password)
 
     try {
       const response = await loginService.login({
@@ -41,7 +42,6 @@ const App = () => {
       setUser(response)
       setUsername("")
       setPassword("")
-      console.log(response.data.token)
 
     } catch(error){
       setErrorNotif('Wrong credentials')
@@ -82,8 +82,9 @@ const App = () => {
   const userInfo = () => {
     return (
       <div>
-        {user.data.name} is Logged in
+        {user.data.name} is logged in
         <button onClick={() => window.localStorage.removeItem('loggedBlogUser')}>Log out</button>
+        <CreateNew setBlogs={setBlogs} setNotif={setNotif}/>
       </div>
     )
   }
@@ -94,6 +95,7 @@ const App = () => {
       <h1>Blog Application</h1>
       
       {errorNotif}
+      {notif}
 
       <h2>Login</h2>
       {user === null? loginForm() : userInfo()}
