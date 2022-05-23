@@ -1,4 +1,10 @@
 # Solutions to Part 4
 
 Learned:
-1) Best practices for backend project structure
+a) Structure of backend application, introduction to testing
+
+b) Testing the backend
+
+c) User administration
+
+d) Token authentication
