@@ -40,9 +40,11 @@ blogRouter.delete('/:id', middleware.userExtractor, async (req, res) => {
 
     const blogDeleteId = req.params.id;
     const user = req.user // from tokenID
-    
+
     // Check to see if the blog (to be deleted)'s user property has the same userID as the token's .id
     const blog = await blogModel.findById(blogDeleteId);
+
+
     if (blog.user.toString() === user._id.toString()){
         await blogModel.findOneAndDelete(blogDeleteId)
         return res.status(204).end()

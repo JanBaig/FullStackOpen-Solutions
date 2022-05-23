@@ -10,10 +10,10 @@ const api = supertest(app)
 
 describe('testing blogs', () => {
 
+    // Apprently not initializing the 'headers' variable makes the code WORK. Maybe because headers gets treated like a variable instead of a built in feature
+
     // Before any blog tests are executed 
     beforeEach(async () => {
-        let headers;
-        let defaultBlogID;
 
         // First register a single user
         await userModel.deleteMany({})
@@ -52,13 +52,10 @@ describe('testing blogs', () => {
             .post('/api/blogs')
             .send(defaultBlog)
             .set(headers)
-
-        defaultBlogID = submitDefaultBlog.body.id
-
-        
-
+       
     })
 
+    // Pass
     test('successfully added a blog', async () => {
 
         const newBlog = {
@@ -80,6 +77,7 @@ describe('testing blogs', () => {
 
     })
 
+    // Pass
     test('missing likes property but still added', async () => {
 
         const newBlog = {
@@ -94,11 +92,10 @@ describe('testing blogs', () => {
             .set(headers)
             .expect(201)
             .expect('Content-Type', /application\/json/)
-        
-        console.log(res.body)
 
     })
 
+    // Pass
     test('missing URL and title', async () => {
 
         const newBlog = {
@@ -112,30 +109,59 @@ describe('testing blogs', () => {
             .set(headers)
             .expect(400)
 
-        //console.log(res.body)
     })
 
     test('succeds with status code 204 if ID is valid', async () => {
-        //const id = testHelper.blogs[0].id
 
+        const blogsBefore = await testHelper.blogsInDB()
 
-        // Find a way to get the defaultBlog's ID and use it here!
-        const res = await api  
-            .delete(`/api/blogs/${defaultBlogID}`)
-            .set(headers)
-            .expect(204)
+        const newBlog = {
+            title:"The best blog ever",
+            author:"Me",
+            url:"http://www.cs.utexas.edu/~EWD/transcriptions/EWD08xx/EWD808.html",
+            likes:12
+        }
+      
+        const result = await api
+        .post('/api/blogs')
+        .send(newBlog)
+        .set(headers)
+        .expect(201)
+
+        const deleted = await api
+        .delete(`/api/blogs/${result.body.id}`)
+        .set(headers)
+        .expect(204)
+
+        const blogsNow = await testHelper.blogsInDB()
+
+        expect(blogsBefore.length).toEqual(blogsNow.length)
 
     })
 
     test('updating a note with valid ID', async () => {
+
+        const blog = {
+            title:"The best blog ever",
+            author:"Me",
+            url:"http://www.cs.utexas.edu/~EWD/transcriptions/EWD08xx/EWD808.html",
+            likes: 20
+        }
+      
+        const result = await api
+        .post('/api/blogs')
+        .send(blog)
+        .set(headers)
+        .expect(201)
+        
+        const ID = result.body.id;
+
         const newBlog = {
-            "title": "Jan"
+            title:"Nothing"
         }
 
-        const id = '5a422a851b54a676234d17f7'
-
         const res = await api
-            .put(`/api/blogs/${id}`)
+            .put(`/api/blogs/${ID}`)
             .send(newBlog)
             .expect(200)
 
@@ -147,7 +173,7 @@ describe('testing blogs', () => {
             .expect(200)
             .expect('Content-Type', /application\/json/)
 
-        expect(res.body).toHaveLength(testHelper.blogs.length)
+        expect(res.body).toHaveLength(1)
 
     })
 
@@ -156,7 +182,6 @@ describe('testing blogs', () => {
         expect(testing.map(blog => blog.id)).toBeDefined() // map would through an error if every item didn't have the property
 
     })
-
 
 })
 
