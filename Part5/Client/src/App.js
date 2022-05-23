@@ -16,6 +16,16 @@ const App = () => {
     )  
   }, [])
 
+  useEffect(() => {
+    const loggedBlogUser = window.localStorage.getItem('loggedBlogUser')
+    if(loggedBlogUser){
+      const result = JSON.parse(loggedBlogUser)
+      setUser(result)
+      blogService.setToken(result.data.token)
+    }
+
+  }, [])
+
   const hangleLogin = async (e) => {
     e.preventDefault()
     console.log('Logged in: ', username, password)
@@ -24,6 +34,9 @@ const App = () => {
       const response = await loginService.login({
         username, password
       })
+
+      window.localStorage.setItem('loggedBlogUser', JSON.stringify(response))
+
       blogService.setToken(response.data.token)
       setUser(response)
       setUsername("")
@@ -67,9 +80,12 @@ const App = () => {
   }
 
   const userInfo = () => {
-    return <div>
-      {user.data.name} is Logged in
-    </div>
+    return (
+      <div>
+        {user.data.name} is Logged in
+        <button onClick={() => window.localStorage.removeItem('loggedBlogUser')}>Log out</button>
+      </div>
+    )
   }
 
 
