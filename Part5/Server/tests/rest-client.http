@@ -1,4 +1,4 @@
-@port = 3000
+@port = 3003
 
 ### Get all blogs
 GET http://localhost:{{port}}/api/blogs
@@ -40,9 +40,9 @@ POST http://localhost:{{port}}/api/user
 Content-Type: application/json
 
 {
-    "username": "Testing again",
-    "name": "Jan",
-    "password": "12345"
+    "username": "Janat",
+    "name": "Janat",
+    "password": "123456789"
 }
 
 #### User Login
