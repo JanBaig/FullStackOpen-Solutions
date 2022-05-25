@@ -42,6 +42,7 @@ const App = () => {
       window.localStorage.setItem('loggedBlogUser', JSON.stringify(response))
 
       blogService.setToken(response.data.token)
+      console.log(response.data.token)
       setUser(response)
       setUsername("")
       setPassword("")
@@ -86,6 +87,18 @@ const App = () => {
     )
   }
 
+  const showDelete = (blog) => {
+    // Janat's ID = 628bf4d5b8303db45e1ebbf2
+    
+    if (JSON.parse(window.localStorage.getItem('loggedBlogUser'))) {
+      const local = JSON.parse(window.localStorage.getItem('loggedBlogUser'))
+      if (local.data.username === blog.user.username){
+        return true
+      }
+      return false
+    }
+  }
+
   return (
     <div>
       <h1>Blog Application</h1>
@@ -109,7 +122,7 @@ const App = () => {
 
       <h2>Blogs</h2> 
       {blogs.sort((a, b) => b.likes-a.likes).map(blog =>{
-          return <Blog key={blog.id} blog={blog} />
+          return <Blog key={blog.id} blog={blog} setBlogs={setBlogs} blogs={blogs} showDelete={showDelete}/>
         })
       }
 

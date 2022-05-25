@@ -1,7 +1,7 @@
 import React, { useState } from "react"
 import blogServices from '../services/blogs'
 
-const Blog = ({ blog }) => {
+const Blog = ({ blog, setBlogs, blogs, showDelete }) => {
   const [visable, setVisable] = useState(true);
   const [likes, setLikes] = useState(0)
   const showWhenVisible = { display: visable ? 'none': '' } // when view button is not displayed then this gets displayed
@@ -29,16 +29,15 @@ const Blog = ({ blog }) => {
     const response = await blogServices.update(blog.id, newObj)
 
   }
+
   const handleDelete = async () => {
+    window.confirm('Are you sure you want to delete?')
     const test = window.localStorage.getItem('loggedBlogUser')
     blogServices.setToken(JSON.parse(test).data.token)
     const testAgain = await blogServices.remove(blog.id)
-    console.log(blog)
-    console.log(testAgain)
-
-
+    setBlogs(blogs.filter(blogCurrent => blogCurrent.id != blog.id))
   }
-
+ 
   return (
     <div style={blogStyle}>
       <div>
@@ -50,7 +49,8 @@ const Blog = ({ blog }) => {
         <p>{'URL: ' + blog.url}</p>
         <p>{'User: ' + blog.user.name}</p>
         <p>{'Likes: ' + blog.likes} <button onClick={handleLikes}>Like</button></p>
-        <button onClick={handleDelete}>Delete</button>
+        {showDelete(blog) ? <button onClick={handleDelete}>Delete</button> : ''} 
+       
       </div>
 
     </div>
