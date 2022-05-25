@@ -21,11 +21,11 @@ Content-Type: application/json
 Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IkphbkphbjIiLCJpZCI6IjYyODk3NTE1NmYyODU4MWMxMTI2YzVmOSIsImlhdCI6MTY1MzE3NzA1MywiZXhwIjoxNjUzMTgwNjUzfQ.6yegFbdUHe-LTMMkXrid1XjEWncw4zE8sQl8lVk2xXw
 
 #### Update a blog
-PUT http://localhost:{{port}}/api/blogs/6284ec3caba6f5fc00a65a4d
+PUT http://localhost:{{port}}/api/blogs/628c0b79b8303db45e1ebcd5
 Content-Type: application/json
 
 {
-    "title": "Testing #2",
+    "title": "Frontend #1",
     "author": "Jan",
     "url": "new URL",
     "likes": 10

@@ -1,8 +1,10 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef, createElement } from 'react'
 import Blog from './components/Blog'
 import blogService from './services/blogs'
 import loginService from './services/login'
 import CreateNew from './components/CreateNew'
+import LoginForm from './components/LoginForm'
+import Toggleable from './components/Togglable'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
@@ -11,6 +13,7 @@ const App = () => {
   const [username, setUsername] = useState("")
   const [password, setPassword] = useState("")
   const [user, setUser] = useState(null) 
+  const createNewFormRef = useRef()
 
   useEffect(() => {
     blogService.getAll().then(blogs =>
@@ -28,7 +31,7 @@ const App = () => {
 
   }, [])
 
-  const hangleLogin = async (e) => {
+  const handleFormLogin = async (e) => {
     e.preventDefault()
 
     try {
@@ -52,43 +55,36 @@ const App = () => {
     }
   }
 
-  function loginForm() {
-    return <form onSubmit={hangleLogin}>
-    <div>
-      username
-        <input 
-          type="text"
-          name="userName"
-          value={username}
-          onChange={(e) => setUsername(e.target.value) }
-          placeholder="Enter username"
-        />
-    </div>
-    <div>
-      password
-        <input 
-          type="password"
-          name="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          placeholder="Enter password"
-        />
-    </div>
-    <button type="submit">Submit</button>
-  </form>
+  const addBlog = async (newObj) => {
+    try {
+      createNewFormRef.current.toggleVisibility()
+      const response = await blogService.create(newObj)
+      console.log(response)
+      setBlogs(blogs => blogs.concat(response))
+      setNotif(`${response.title} by ${response.author} added`)
+      setTimeout(() => {
+        setNotif(null)
+      }, 5000)
+
+    } catch(error){
+      console.log(error.message)
+    }
 
   }
 
-  const userInfo = () => {
+  const userInfo = () => { 
     return (
       <div>
         {user.data.name} is logged in
         <button onClick={() => window.localStorage.removeItem('loggedBlogUser')}>Log out</button>
-        <CreateNew setBlogs={setBlogs} setNotif={setNotif}/>
+
+        <Toggleable buttonLabel="Create new" ref={createNewFormRef}>
+          <CreateNew setBlogs={setBlogs} setNotif={setNotif} addBlog={addBlog}/>
+        </Toggleable>
+
       </div>
     )
   }
-
 
   return (
     <div>
@@ -97,20 +93,28 @@ const App = () => {
       {errorNotif}
       {notif}
 
-      <h2>Login</h2>
-      {user === null? loginForm() : userInfo()}
+      {user === null? 
+      <Toggleable buttonLabel="Login">
+        <LoginForm 
+          username={username}  
+          password={password} 
+          setUsername={setUsername} 
+          setPassword={setPassword} 
+          handleFormLogin={handleFormLogin}
+        />
+      </Toggleable>
+      : 
+       userInfo()
+      }
 
-     
-      <h2>Blogs</h2>
-      {blogs.map(blog =>
-        <Blog key={blog.id} blog={blog} />
-      )}
+      <h2>Blogs</h2> 
+      {blogs.sort((a, b) => b.likes-a.likes).map(blog =>{
+          return <Blog key={blog.id} blog={blog} />
+        })
+      }
 
     </div>
   )
 }
 
 export default App
-
-// Tasks
-// Login Form

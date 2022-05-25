@@ -46,8 +46,8 @@ blogRouter.delete('/:id', middleware.userExtractor, async (req, res) => {
 
 
     if (blog.user.toString() === user._id.toString()){
-        await blogModel.findOneAndDelete(blogDeleteId)
-        return res.status(204).end()
+        const result = await blogModel.findOneAndDelete(blogDeleteId)
+        return res.status(204).json(result)
     }
     return res.status(401).json({ error: 'Not your blog! Cannot delete this' })
 
@@ -64,8 +64,8 @@ blogRouter.put('/:id', async (req, res) => {
         likes: body.likes,
     }
 
-    await blogModel.findByIdAndUpdate(req.params.id, newBlog, { new: true })
-    res.status(200).end()
+    const res2 = await blogModel.findByIdAndUpdate(req.params.id, newBlog, { new: true })
+    return res.status(200).json(res2)
 
 })
 
